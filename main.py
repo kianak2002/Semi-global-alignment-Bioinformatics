@@ -85,8 +85,8 @@ def find_max(matrix):
             ind_list.append(tuple(ind))
     return ind_list
 
-
-def trace_backward(tb, ind, res1, res2, matrix, save_last, hamechi, kolln):
+hamechi = []
+def trace_backward(tb, ind, res1, res2, matrix, save_last):
     back_ind_list = tb[ind]
 
     for back_ind in back_ind_list:
@@ -94,11 +94,11 @@ def trace_backward(tb, ind, res1, res2, matrix, save_last, hamechi, kolln):
             new_res2 = "-" + res2
             new_res1 = first_seq[ind[1] - 1] + res1
 
-        if ind[1] == back_ind[1]:
+        elif ind[1] == back_ind[1]:
             new_res1 = "-" + res1
             new_res2 = second_seq[ind[0] - 1] + res2
 
-        if ind[0] != back_ind[0] and ind[1] != back_ind[1]:
+        else:
             new_res1 = first_seq[ind[1] - 1] + res1
             new_res2 = second_seq[ind[0] - 1] + res2
 
@@ -106,10 +106,8 @@ def trace_backward(tb, ind, res1, res2, matrix, save_last, hamechi, kolln):
             new_res1, new_res2 = gap_first(back_ind[0], back_ind[1], new_res1, new_res2)
             new_res1, new_res2 = gap_last(save_last[0], save_last[1], new_res1, new_res2, matrix)
             hamechi.append((new_res1, new_res2))
-            if len(hamechi) == kolln:
-                sort_list(hamechi)
             return
-        trace_backward(tb, back_ind, new_res1, new_res2, matrix, save_last, hamechi, kolln)
+        trace_backward(tb, back_ind, new_res1, new_res2, matrix, save_last)
 
 
 def gap_first(ind_x, ind_y, res1, res2):
@@ -144,15 +142,13 @@ def sort_list(seq):
 
 
 if __name__ == '__main__':
-    # first_seq = input()
-    # second_seq = input()
-    first_seq = 'HEAGAWGHE'
-    second_seq = 'PAWHEA'
+    first_seq = input()
+    second_seq = input()
     mat = np.zeros((len(second_seq) + 1, len(first_seq) + 1))
     local = create_semiglobal(mat, first_seq, second_seq)
     score = find_score(mat)
     print(int(score))
-    print(mat)
+    # print(mat)
 
     if score == 0:
         exit(0)
@@ -160,4 +156,5 @@ if __name__ == '__main__':
     index = find_max(mat)
     hamechi = []
     for ind in index:
-        trace_backward(local, ind, "", "", mat, ind, hamechi, len(index))
+        trace_backward(local, ind, "", "", mat, ind)
+    sort_list(hamechi)
